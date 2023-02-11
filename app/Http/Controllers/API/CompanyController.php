@@ -96,14 +96,18 @@ class CompanyController extends Controller
 
             if($request->hasFile('logo')){
                 $path = $request->file('logo')->store('public/logos');
+                $company->update([
+                    'name' => $request->name,
+                    'logo' => isset($path) ? $path : $company->logo
+                ]);
             }
-
-            $company->update([
-                'name' => $request->name,
-                'logo' => $path
-            ]);
-
+            else{
+                $company->update([
+                    'name' => $request->name,
+                ]);
+            }
             return ResponseFormatter::success($company,'Company Updated');
+
         } catch (Exception $er) {
             return ResponseFormatter::error($er->getMessage(),500);
         }
